@@ -1,5 +1,5 @@
 # Competitive-Progamming
-- Repositório de soluções e conteúdos para problemas de maratona competitiva. 
+- Repositório de soluções e conteúdos para problemas de programação competitiva. 
 
 - CodeForces: [nicolas14](https://codeforces.com/profile/nicolas14)
 - VJudge: [nicolasreis14](https://vjudge.net/user/nicolasreis14)
