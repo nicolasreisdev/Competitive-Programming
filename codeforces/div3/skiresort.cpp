@@ -13,7 +13,12 @@ typedef long long ll;
 const int MAX = 1e5 + 10;
 const int MIN = 0;
 
-int main()
-{
+int main(){
+    int n; cin >> n;
+    while(n!=0){
+        int k, l; cin >> k >> l;
+
+        n--;
+    }
     return 0;
 }

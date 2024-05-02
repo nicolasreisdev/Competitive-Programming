@@ -14,20 +14,15 @@ const int MAX = 1e5 + 10;
 const int MIN = 0;
 
 int main(){
-    int t; cin >> t;
-    while(t != 0){
-        int n, k; cin >> n >> k;
-        vector<int> v;
-        for(int i = 0; i < n; i++){
-            int x; cin >> x;
+    int n; cin >> n;
+    for(int i = 0; i < n;i++){
+        int a, sum = 0; cin >> a;
+        for(int j = 0; j < a; j++){
+            int b; cin >> b;
+            sum++;
         }
-        
-
-        t--;
+        if(sum%2==1 || sum==2) cout << 2 << endl;
+        else cout << 3 << endl;
     }
-
-
-
-
     return 0;
 }
