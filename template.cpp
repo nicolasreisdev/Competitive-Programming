@@ -7,12 +7,12 @@ using namespace std;
 #define s second
 #define sz size
 #define in insert
-
+ 
 
 typedef pair<int,int>p;
 typedef long long ll;
-const int MAX = 1e5 + 10;
-const int MIN = 0; 
+const int MAX = 0x3f3f3f3f;
+const ll LMAX = 0x3f3f3f3f3f3f3f3f;
 
 int main(){
     return 0;

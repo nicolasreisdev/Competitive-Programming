@@ -13,19 +13,19 @@ typedef long long ll;
 const int MAX = 0x3f3f3f3f;
 const ll LMAX = 0x3f3f3f3f3f3f3f3f;
 
-int K;
-int h[100000];
-
-
-int c(int i){
-    if(i == 0) return 0;
-    int ret = MAX;
-    for(int j = max(0, i-K); j < i;j++){
+int main(){
+    string x, y;
+    cin >> x >> y;
+    int j = 0;
+    for(int i = 0; i < y.size(); i++){
+        if(y[i] == x[j]){
+            cout << i+1 << " ";
+            if(j != x.size()-1){
+                j++;
+            }
+        }
     }
-    return ret;
-}
+    cout << endl;
 
-int main()
-{
     return 0;
 }
