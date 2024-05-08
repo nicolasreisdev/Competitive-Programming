@@ -119,7 +119,7 @@ public:
 	//sum(i) = a[0] + a[1] + a[2] + ....+ a[i]
 	//Example: if we add: (2,1) (1,1) (3,1)  ( (idx,frequency) ) to a BIT...
 	//                    read(2) = 2 ( only 2 and 1 are <= 2)  ... read(1) = 1 ... read(10) = 3
-	int read(int idx){
+	int rsq(int idx){ // RSQ
 		int sum = 0;
 		while (idx > 0){
 			sum += tree[idx];
@@ -128,8 +128,12 @@ public:
 		return sum;
 	}
 
+	int rsq(int a, int b){ // RSQ
+		return rsq(b) - rsq(a - 1);
+	}
+
 	//increment the occurrency of the element in bin idx by val... update(i,v) --> bin[idx] += val
-	void update(int idx ,int val){
+	void update(int idx ,int val){ // UPDATE
 		while (idx <= MaxVal){
 			tree[idx] += val;
 			idx += (idx & -idx);
@@ -250,7 +254,7 @@ int main() {
 	for(int i = 0; i < n;i++){
 		bit.update(i,i);
 	}
-	int sum = bit.read(n);
+	int sum = bit.rsq(n);
 	cout << sum << endl;	
 	/*for(int t=0;t<nt;t++) {
 		//memset(tree,0, sizeof(int)*1000006);
