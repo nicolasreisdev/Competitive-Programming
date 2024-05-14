@@ -22,8 +22,7 @@ void dfs(int v){
     }
 }
 
-int main()
-{
+int main(){
     int n, m, x, y, times = 0; 
     cin >> n >> m;
     for(int i = 0; i < m; i++){

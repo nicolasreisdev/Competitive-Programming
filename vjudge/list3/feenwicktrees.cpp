@@ -52,7 +52,6 @@ public:
 int main(){
     int n; cin >> n;
     vector<ll> f(n+1, 0);
-    f[0] = 0;
     for(int i = 1; i <= n; i++){
         int x; cin >> x;
         f[i] = x;

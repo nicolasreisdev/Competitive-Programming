@@ -14,8 +14,7 @@ const int MAX = 1e5+10;
 bool visitado[MAX] = {false};
 
 // busca em profundidade a partir do vertice v
-void dfs(vector<int> g[MAX], int v)
-{
+void dfs(vector<int> g[MAX], int v){
     visitado[v] = true; // marca v como visitado
     for (int i : g[v])  // visita cada adjacente não visitado
         if (!visitado[i])
@@ -23,23 +22,20 @@ void dfs(vector<int> g[MAX], int v)
     return;
 }
 
-int main()
-{
+int main(){
     vector<int> g[MAX]; // lista de adjacencia
     int n, m;
     int a, b;
 
     cin >> n >> m; // n vertices, m arestas
-    for (int i = 0; i < m; i++)
-    { // lê as arestas (ligações)
+    for (int i = 0; i < m; i++){ // lê as arestas (ligações)
         cin >> a >> b;
         g[a].push_back(b); // a liga no b
         g[b].push_back(a); // b liga no a --> retirar esta linha se for direcionado
     }
 
     // Escreve a matriz de adjacência
-    for (int i = 1; i <= n; i++)
-    {
+    for (int i = 1; i <= n; i++){
         cout << i << ": ";
         for (int j = 0; j < g[i].size(); j++)
             cout << g[i][j] << " ";

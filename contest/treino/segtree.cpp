@@ -19,9 +19,11 @@ struct Seg{
 
     //O(n)
     int build(int p, int l, int r){
-        if(l==r) return seg[p] = v[l];
+        if(l==r) return seg[p] = v[l]; // se for folha
         int m = (l+r)/2;
-        return seg[p] = min(build(2*p, l , m), build(2*p,m+1,r));
+        return seg[p] = min(build(2*p, l , m), build(2*p+1,m+1,r)); // constroi a arvore com o minimo dos filhos
+        // 2*p é o filho da esquerda e 2*p+1 é o filho da direita
+        // ex: build(1,0,7) -> build(2,0,3) build(3,4,7) -> build(4,0,1) build(5,2,3) build(6,4,5) build(7,6,7)
     }
 
     void build(ll n2, vector<ll> &v2){
@@ -32,10 +34,10 @@ struct Seg{
 
     // O(4 log n)
     ll query(int a, int b, int p, int l, int r){
-        if(b<l or a>r) return INF;
+        if(b<l or a>r) return INF; // se o intervalo estiver fora do range
         if(a<=l and b>=r) return seg[p];
         int m = (l+r)/2;
-        return seg[p] = min(query(a,b,p*2,l,m), query(a,b,p+1*2,m+1,r));
+        return seg[p] = min(query(a,b,p*2,l,m), query(a,b,p*2+1,m+1,r));
     }
 
 

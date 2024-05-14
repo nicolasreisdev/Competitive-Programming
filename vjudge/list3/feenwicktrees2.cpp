@@ -11,19 +11,17 @@ typedef long long ll;
 const int MAX = 1e5 + 10;
 const ll INF = 1e15;
 
-struct Seg
-{
+struct Seg{
 
     vector<ll> v;
     ll seg[4 * MAX];
     ll n;
 
-    // O(n)
     int build(int p, int l, int r){
         if (l == r)
             return seg[p] = v[l];
         int m = (l + r) / 2;
-        return seg[p] = (build(2 * p, l, m) + build(2 * p, m + 1, r));
+        return seg[p] = (build(2*p, l, m) + build(2*p+1, m + 1, r));
     }
 
     void build(ll n2, vector<ll> &v2){
@@ -32,24 +30,20 @@ struct Seg
         build(1, 0, n - 1);
     }
 
-    // O(4 log n)
     ll query(int a, int b, int p, int l, int r){
         int m = (l + r) / 2;
-        return seg[p] = min(query(a, b, p * 2, l, m), query(a, b, p + 1 * 2, m + 1, r));
+        return (query(a, b, p*2, l, m)+query(a, b, p*2+1, m + 1, r));
     }
 
     ll query(int a, int b){
         return query(a, b, 1, 0, n - 1);
     }
 
-    // O( 2 log n)
     ll update(int i, int x, int p, int l, int r){
-        if (i < l or i > r)
-            return seg[p];
-        if (l == r)
-            return seg[p] = x;
+        if (i < l or i > r)return seg[p];
+        if (l == r)return seg[p] += x;
         int m = (l + r) / 2;
-        return seg[p] = min(update(i, x, 2 * p, l, m), update(i, x, 2 * p + 1, m + 1, r));
+        return seg[p] = (update(i, x, 2 * p, l, m)+update(i, x, 2*p + 1, m + 1, r));
     }
 
     ll update(int i, int x){
@@ -57,16 +51,33 @@ struct Seg
     }
 };
 
-int main(){
+int main()
+{
+    int n;
+    cin >> n;
+    vector<ll> f(n, 0);
+    for (int i = 0; i < n; i++){
+        cin >> f[i];
+    }
+    Seg ft;
+    ft.build(n, f);
+    int q;
+    cin >> q;
+    while (q--){
+        char a;
+        cin >> a;
+        if (a == 'u'){
+            ll i, v;
+            cin >> i >> v;
+            ft.update(i-1, v);
+        }
+        else if (a == 'q'){ 
+            int i, j;
+            cin >> i >> j;
+            cout << ft.query(i-1, j-1) << endl;
+        }
+    }
 
-    ll n = 8;
-    vector<ll> v = {13, 3, 6, 20, 18, 6, 10, 4};
-
-    Seg seg;
-    seg.build(n, v);
-    cout << seg.query(0, 7) << endl;
-    seg.update(1, 5);
-    cout << seg.query(0, 7) << endl;
 
     return 0;
 }
