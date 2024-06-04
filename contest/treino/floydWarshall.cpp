@@ -11,8 +11,7 @@ typedef pair<int, int> p;
 typedef long long ll;
 const int MAX = 1e5 + 10;
 
-int main()
-{
+int main(){
     int n, m; cin >> m >> n;
     int dist[m][n];
 
@@ -27,6 +26,8 @@ int main()
                 // dist[i][j]
                 if (dist[i][j] > (dist[i][k] + dist[k][j]) && (dist[k][j] != INF && dist[i][k] != INF))
                     dist[i][j] = dist[i][k] + dist[k][j];
+                // or
+                 dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
             }
         }
     }

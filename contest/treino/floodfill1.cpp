@@ -1,10 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void floodfill(vector<vector<int>> v, int a, int b)
-{
-    if ((v[a][b] == 1 || v[a][b] == 3) && a > 0 && b > 0 && a < v.size() && b < v[0].size())
-    {
+void floodfill(vector<vector<int>> v, int a, int b){
+    if ((v[a][b] == 1 || v[a][b] == 3) && a > 0 && b > 0 && a < v.size() && b < v[0].size()){
         floodfill(v, a + 1, b);
         floodfill(v, a - 1, b);
         floodfill(v, a, b + 1);

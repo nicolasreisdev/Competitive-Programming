@@ -23,8 +23,7 @@ void bfs(int v){
     while (!fila.empty()){
         int s = fila.front();
         fila.pop();
-        for (auto e : g[s])
-        {
+        for (auto e : g[s]){
             if (!visited[e]){
                 visited[e] = true;
                 pai[e] = s;
@@ -50,8 +49,7 @@ vector<int> path(int v){
     return ret;
 }
 
-int main()
-{
+int main(){
     int n, m;
     int x, y;
     cin >> n >> m;

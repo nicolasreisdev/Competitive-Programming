@@ -15,18 +15,18 @@ bool visited[MAX]={false};
 int dist[MAX];
 
 void bfs(int v){
-    queue<int> fila[MAX];
+    queue<int> fila;
     fila.push(v);
     visited[v] = true;
 
     while(!fila.empty()){
         int s = fila.front();
-        q.pop();
+        fila.pop();
         for(auto e: g[s]){
             if(!visited[e]){
                 dist[e] = dist[s]+1;
                 visited[e] = true;
-                q.push(e);
+                fila.push(e);
             }
         }
     }

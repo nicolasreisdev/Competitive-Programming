@@ -17,9 +17,8 @@ struct Seg{
     ll seg[4 * MAX];
     ll n;
 
-    int build(int p, int l, int r){
-        if (l == r)
-            return seg[p] = v[l];
+    ll build(int p, int l, int r){
+        if (l == r)return seg[p] = v[l];
         int m = (l + r) / 2;
         return seg[p] = (build(2*p, l, m) + build(2*p+1, m + 1, r));
     }
@@ -31,11 +30,15 @@ struct Seg{
     }
 
     ll query(int a, int b, int p, int l, int r){
+        if (a > r or b < l)return 0;
+        if( a <= l and r >= b)return seg[p];
         int m = (l + r) / 2;
         return (query(a, b, p*2, l, m)+query(a, b, p*2+1, m + 1, r));
     }
 
     ll query(int a, int b){
+        for(int i = 0; i < 4 * n; i++)cout << seg[i] << " ";
+        cout << endl;
         return query(a, b, 1, 0, n - 1);
     }
 
@@ -43,7 +46,7 @@ struct Seg{
         if (i < l or i > r)return seg[p];
         if (l == r)return seg[p] += x;
         int m = (l + r) / 2;
-        return seg[p] = (update(i, x, 2 * p, l, m)+update(i, x, 2*p + 1, m + 1, r));
+        return seg[p] = (update(i, x, 2 * p, l, m ) + update(i, x, 2*p + 1, m + 1, r));
     }
 
     ll update(int i, int x){
@@ -51,32 +54,32 @@ struct Seg{
     }
 };
 
-int main()
-{
-    int n;
+int main(){
+    ll n;
     cin >> n;
-    vector<ll> f(n, 0);
+    vector<ll> f(n);
     for (int i = 0; i < n; i++){
         cin >> f[i];
     }
     Seg ft;
     ft.build(n, f);
     int q;
-    cin >> q;
+    /*cin >> q;
     while (q--){
-        char a;
-        cin >> a;
-        if (a == 'u'){
-            ll i, v;
+        char c;
+        cin >> c;
+        if (c == 'u'){
+            int i, v;
             cin >> i >> v;
             ft.update(i-1, v);
         }
-        else if (a == 'q'){ 
-            int i, j;
-            cin >> i >> j;
-            cout << ft.query(i-1, j-1) << endl;
+        else if (c == 'q'){ 
+            int a, b;
+            cin >> a >> b;
+            a--;b--;
+            cout << ft.query(a, b) << endl;
         }
-    }
+    }*/
 
 
     return 0;
