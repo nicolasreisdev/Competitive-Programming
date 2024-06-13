@@ -23,7 +23,7 @@ int solve(int i , int j){
         dp[i][j] = max(solve(i-1, j), solve(i-1, j-w[i]) + v[i]); // calculate the value
         ok[i][j] = 1; // mark as calculated
     }   
-    return dp[i][j]; // return the value
+    return dp[i][j]; // return the value    
 }
 
 int main(){

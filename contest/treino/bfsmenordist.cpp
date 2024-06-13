@@ -16,16 +16,16 @@ int dist[MAX];
 
 void bfs(int v){
     queue<int> fila;
-    fila.push(v);
-    visited[v] = true;
+    fila.push(v); // coloca o vertice inicial na fila
+    visited[v] = true; // marca como visitado
 
-    while(!fila.empty()){
-        int s = fila.front();
+    while(!fila.empty()){ // enquanto a fila nao estiver vazia
+        int si = fila.front(); // pega o vertice da frente da fila
         fila.pop();
-        for(auto e: g[s]){
-            if(!visited[e]){
-                dist[e] = dist[s]+1;
-                visited[e] = true;
+        for(auto e: g[si]){ // percorre os vizinhos do vertice
+            if(!visited[e]){ // se o vizinho nao foi visitado
+                dist[e] = dist[si]+1; // atualiza a distancia
+                visited[e] = true; // marca como visitado
                 fila.push(e);
             }
         }
@@ -43,8 +43,6 @@ int main(){
     }
 
     bfs(0);
-
-
 
     return 0;
 }

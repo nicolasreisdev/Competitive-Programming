@@ -13,38 +13,42 @@ typedef long long ll;
 const int MAXIMO = 0x3f3f3f3f;
 const ll LMAXIMO = 0x3f3f3f3f3f3f3f3f;
 
-int n, m, k, q;
-int mxd = 1, myd = 1, mxe = 1, mye = 1, mxf = 1, myf = 1;
-
-void floodfill(vector<vector<bool>> &mat, int x, int y){
-    if(x < 0 || x >= n || y < 0 || y >= m || mxd > k || mxe > k || myd > k || mye > k) return;
-    floodfill(mat, x+1, y);
-    mxd++;
-    mxe--;
-    mxf = max(mxf, mxd);
-    floodfill(mat, x-1, y);
-    floodfill(mat, x, y+1);
-    floodfill(mat, x, y-1);
-}
-
-int main(){
-    cin >> n >> m >> k >> q;
-    vector<vector<bool>> mat(n, vector<bool>(m, false));
-    int guard[n][m];
-    for(int i = 0; i < q;i++){
-        int x, y, d; cin >> x >> y >> d;
-        x--; y--;
-        guard[x][y] = d;
-        mat[x][y] = true;
-    }
-    for(int i = 0; i < n;i++){
-        for(int j = 0; j < m;j++){
-            if(mat[i][j]){
-                floodfill(mat, i, j);
+int maxmin(int a, int b, int k, vector<vector<int>> &mat)
+{
+    bool filled = true;
+    int maxV = 0;
+    for (int i = a; i< a+k; i++){
+        for (int j = b; j < b+k; j++){
+            if (mat[i][j] == 0){
+                filled = false;
+                break;
             }
+            maxV = max(maxV, mat[i][j]);
         }
     }
 
+    return filled ? maxV : MAXIMO;
+}
 
+int main(){
+    int n, m , k , q;
+    cin >> n >> m >> k >> q;
+    vector<vector<int>> mat(n, vector<int>(m, 0));
+    int a, b, d;
+    for(int i = 0; i < q; i++){
+        cin >> a >> b >> d;
+        a--;
+        b--;
+        mat[a][b] = d;
+    }
+    int v = MAXIMO;
+    for(int i = 0; i < n-k+1; i++){
+        for(int j = 0; j < m-k+1; j++){
+            v = min(v, maxmin(i, j, k, mat));
+
+        }
+    }
+
+    cout << (v == MAXIMO ? -1 : v) << endl;
     return 0;
 }

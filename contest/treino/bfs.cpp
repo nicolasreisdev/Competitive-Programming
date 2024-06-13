@@ -53,8 +53,7 @@ int main(){
     int n, m;
     int x, y;
     cin >> n >> m;
-    for (int i = 0; i < m; i++)
-    {
+    for (int i = 0; i < m; i++){
         cin >> x >> y;
         x--;
         y--;

@@ -30,7 +30,6 @@ double ternarySearch(double l, double r){
     }
     return f(l); // return the minimum of f(x) in [l, r]
 
-
 }
 
 

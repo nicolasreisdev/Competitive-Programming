@@ -15,9 +15,28 @@ const ll LMAX = 0x3f3f3f3f3f3f3f3f;
 
 int main(){
     int n; cin >> n;
-    string s; cin >> s;
-    for(int i = 0; i < s.sz()-1;i++){
-        
+    string x; cin >> x;
+    int sum = 0, saltos = 0;
+    bool flag = false;
+    for(int i = 0; i < x.sz();i++){
+        if(x[i]=='.'){
+            sum--;
+            flag = true;
+        }
+        if(x[i]=='x'){
+            if(flag){
+                sum = 1;
+                saltos++;
+                flag = false;
+            }
+            else sum++;
+        }
+        if(sum < 0){
+            cout << -1 << endl;
+            return 0;
+        }
     }
+    cout << saltos << endl;
+
     return 0;
 }
