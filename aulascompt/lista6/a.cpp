@@ -17,21 +17,17 @@ const ll LMAX = 0x3f3f3f3f3f3f3f3f;
 
 int main(){
     fastio;
-    int dp[LMAX];
-    string a; cin >> a;
-    int lisMax = 0;
 
-    memset(dp, -1, sizeof(dp));
-    dp[0] = 1;
-    for(int i = 0; i < a.size();i++){
-        dp[i] = 1;
-        for(int j = 0; j < i; j++){
-            if(a[j] <= a[i]){
-                dp[i] = max(dp[i], dp[j] + 1);
-            }
+
+    int n;  cin >> n;
+    vector<vector<int>>v(n);
+    for(int i = 0; i < n;i++){
+        int k; cin >> k;
+        for(int j = 0; j < k;j++){
+            int p;cin >> p;
+            v[i].pb(p); 
         }
-        lisMax = max(lisMax, dp[i]);
     }
-    cout << lisMax << endl;
+
     return 0;
 }

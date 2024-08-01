@@ -39,8 +39,10 @@ int LIS(int i){
 int main(){
     fastio;
 
+    string x; cin >> x;
     memset(dp, -1, sizeof(dp));
     dp[0] = 1;
+    //int ans =  LIS()
 
 
     return 0;
