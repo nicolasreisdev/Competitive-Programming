@@ -1,36 +1,15 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// #define fastio ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL)
-#define endl '\n'
 #define pb push_back
 #define rm pop_back
 #define f first
-// #define s second
-#define sz size
-// #define in insert
-
-typedef pair<int, int> p;
-typedef long long ll;
-const int MAX = 0x3f3f3f3f;
-const ll LMAX = 0x3f3f3f3f3f3f3f3f;
+#define s second
+#define INF 99999
 
 typedef pair<int, int> p;
 typedef long long ll;
 const int MAX = 1e5 + 10;
-
-
-
-int floydWarshalminmax(vector<vector<int>> &g, int s, int d){
-    for (int k = 0; k < g.sz(); k++){
-        for (int i = 0; i < g.sz(); i++){
-            for (int j = 0; j < g.sz(); j++){
-                g[i][j] = max(g[i][j], min(g[i][k], g[k][j]));
-            }
-        }
-    }
-    return g[s][d];
-}
 
 int main(){
     int n, m; cin >> m >> n;
