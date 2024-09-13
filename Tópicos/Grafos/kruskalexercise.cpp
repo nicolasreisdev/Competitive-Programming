@@ -57,7 +57,7 @@ void kruskal(vector<vector<ll>> &g, int n, ll init){
         ll w = edges[0];
         ll x = edges[1];
         ll y = edges[2];
-        if(dsu.find(x) != dsu.find(y)){
+        if(!dsu.same(x, y)){ // Se nao forma ciclo (x e y nao estao na mesma componente), isso serve para percorrermos todas as arestas e nao formar ciclos
             dsu.unite(x, y);
             cost += w;
         }
