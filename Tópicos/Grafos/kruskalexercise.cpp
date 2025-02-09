@@ -49,6 +49,7 @@ struct dsu{
 
 //vector<tuple<int, int, int>> edges; // {weight, from, to}
 
+map<string, ll> names;
 void kruskal(vector<vector<ll>> &g, int n, ll init){
     dsu dsu(n);                       // Inicializa a DSU
     ll cost = 0;                      // Custo total da MST
@@ -60,11 +61,14 @@ void kruskal(vector<vector<ll>> &g, int n, ll init){
         if(!dsu.same(x, y)){ // Se nao forma ciclo (x e y nao estao na mesma componente), isso serve para percorrermos todas as arestas e nao formar ciclos
             dsu.unite(x, y);
             cost += w;
+            string l, r;
+            cout << "adicionando a aresta " << w << " de " << x << " para " << y << endl;
         }
-    }
+    }   
 
     for(int i = 0; i < n;i++){
-        if(!dsu.same(i, init)){ // se algum vertice nao esta conectado ao vertice inicial
+        if(!dsu.same(i, init))
+        { // se algum vertice nao esta conectado ao vertice inicial
             cout << "Impossible" << endl;
             return;
         }
@@ -85,10 +89,10 @@ int main(){
             flag = true;
         }*/
         vector<vector<ll>> g;
-        map<string, ll> names;
         for(int i = 0; i < s;i++){
             string x; cin >> x;
             names[x] = i;
+            cout << x << " = " << i << endl;
         }
         for(int i = 0; i < c;i++){
             string x, y; cin >> x >> y;

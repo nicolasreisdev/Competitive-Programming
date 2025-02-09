@@ -157,8 +157,8 @@ pair<ll, vector<tuple<int, int, int>>> kruskal(int n){
 
 // Driver code
 int main(){
-    Graph g(4);
-    g.addEdge(0, 1, 10);
+    Graph g(11); 
+    g.addEdge(0, 1, 10);// {weight, from, to}
     g.addEdge(1, 3, 15);
     g.addEdge(2, 3, 4);
     g.addEdge(2, 0, 6);

@@ -185,8 +185,7 @@ vector<int> matching(T &s, T &t){
 
 struct KMPaut : vector<vector<int>>{
     KMPaut() {}
-    KMPaut(string &s) : vector<vector<int>>(26, vector<int>(s.size() + 1))
-    {
+    KMPaut(string &s) : vector<vector<int>>(26, vector<int>(s.size() + 1)){
         vector<int> p = pi(s);
         auto &aut = *this;
         aut[s[0] - 'a'][0] = 1;
