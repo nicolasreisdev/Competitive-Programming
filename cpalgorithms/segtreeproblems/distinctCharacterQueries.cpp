@@ -12,25 +12,33 @@ using namespace std;
 
 typedef pair<int, int> p;
 typedef long long ll;
-const int MAX = 0x3f3f3f3f;
+const int MAX = 1e5 + 10;
 const ll LMAX = 0x3f3f3f3f3f3f3f3f;
 
+struct Seg{
+    vector<string> v;
+    ll seg[26][4*MAX];
+    ll n;
 
-vector<int> z_function(string s){
-    int n = s.size();
-    vector<int> z(n, 0);
-    for(int i = 1, l = 0, r = 0; i < n; i++){
-        if(i <= r) z[i] = min(r-i+1, z[i-l]);
-        while(i+z[i] < n && s[z[i]] == s[i+z[i]]) z[i]++;
-        if(i+z[i]-1 > r) l = i, r = i+z[i]-1;
+    
+
+
+
+    void build(ll n2, vector<string>v2){
+        n = n2;
+        v = v2;
     }
-    return z;
-}
+
+
+
+};
+
+
+
+
 
 int main(){
     fastio;
-
-    
 
     return 0;
 }

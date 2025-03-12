@@ -4,6 +4,46 @@ using namespace std;
 
 // DSU data structure
 // path compression + rank by union
+
+// My DSU
+class UnionFind
+{
+public:
+    void createset(int n)
+    {
+        parent.resize(n);
+        for (int i = 0; i < n; i++)
+        {
+            parent[i] = i;
+        }
+    }
+
+    int find(int x)
+    {
+        return parent[x] == x ? x : parent[x] = find(parent[x]); // path compression
+    }
+
+    bool same(int x, int y)
+    {
+        return find(x) == find(y);
+    }
+
+    void unite(int x, int y)
+    {
+        parent[find(x)] = find(y);
+    }
+
+private:
+    vector<int> parent;
+};
+
+
+
+// ------------------------------ // --------------------------
+
+
+
+
 class DSU{
     int *parent; // Vetor de pais
     int *rank;   // Vetor de rank

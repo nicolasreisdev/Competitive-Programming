@@ -195,6 +195,10 @@ struct KMPaut : vector<vector<int>>{
     }
 };
 
+
+
+
+
 int main(){
     fastio;
 
