@@ -1,7 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define fastio ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL)
+#define fastio                        \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(NULL);                    \
+    cout.tie(NULL)
 #define endl '\n'
 #define pb push_back
 #define rm pop_back
@@ -15,8 +18,52 @@ typedef long long ll;
 const int MAX = 0x3f3f3f3f;
 const ll LMAX = 0x3f3f3f3f3f3f3f3f;
 
+struct node{
+    map<char,int> ch;
+    int cnt, suf, par;
+};
+
+node aho[MAX];
+
+int tt = 0;
+
+// O(|s|)
+void add(string s){
+    int cur = 0;
+    for (char c : s){
+        if (aho[cur].ch.count(c) == 0){// se não existe o caractere c na aho
+            aho[++tt].end = false;// cria um novo nó
+            aho[tt].ch.clear();// inicializa o vetor de filhos do nó
+            aho[tt].ch[c - 'a'] = tt;// faz a ligação do nó atual com o novo nó
+            aho[tt].par = cur;
+            aho[tt].suf = 0;
+            aho[cur].ch[c - 'a'] = tt;
+        }
+        cur = aho[cur].ch[c - 'a']; // vai para o próximo nó
+    }
+    aho[cur].cnt++; // marca o nó como final de palavra
+}
+
+// O(|s|)
+bool buildAho(string s){
+    queue<pair<int, char>>q;
+
+    for(auto & [v, c]: aho[0].ch){
+        q.emplace(v,c);
+    }
+
+    while(q.size()){
+        auto[u, c] = q.front();
+        q.pop();
+
+        // calcular o suffix link
+        if(aho[u].par == 0){
+            
+        }
+    }
+}
+
 int main(){
-    fastio;
 
     return 0;
 }
