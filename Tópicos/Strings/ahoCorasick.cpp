@@ -57,13 +57,42 @@ bool buildAho(string s){
         q.pop();
 
         // calcular o suffix link
-        if(aho[u].par == 0){
-            
+        if(aho[u].par == 0){ // se o nó é a raiz
+            int & j = aho[u].suf; // suffix link do nó u
+            j = aho[aho[u].par].suf;  // suffix link do pai de u
+
+            while(j != 0 && aho[j].ch.count(c) == 0){ // enquanto não chegar na raiz e não tiver o caractere c
+                j = aho[j].suf; // vai para o suffix link do nó j
+            }
+
+            if(aho[j].ch.count(c)){
+                j = aho[j].ch[c]; // vai para o nó que tem o caractere c
+            }
+        }
+
+        for (auto &[v, c] : aho[0].ch){
+            q.emplace(v, c);
         }
     }
 }
 
 int main(){
+
+    string s; cin >> s;
+
+    int n = s.size();
+    int q; cin >> q;
+    for(int i = 0; i < q; i++){
+        string t; cin >> t;
+        add(t);
+    }
+
+    buildAho(s);
+
+    int cur = 0;
+    for(int i = 0; i < n;i++){
+
+    }
 
     return 0;
 }
