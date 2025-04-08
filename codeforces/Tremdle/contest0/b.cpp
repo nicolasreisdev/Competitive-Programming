@@ -26,7 +26,7 @@ int main(){
     }
 
     for(auto ans: m){
-        if(ans.second > m.size()/2){
+        if(ans.second > n/2){
             cout << ans.first << endl;
             return 0;
         }

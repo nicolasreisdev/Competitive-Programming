@@ -20,13 +20,9 @@ int main(){
 
     int t; cin >> t;
     while(t--){
-        int n; cin >> n;
-        ll ans = 0;
-        ans += n;
-        for(int i = 0; i < 4; i++){
-            ans+=n-1;
-        }
-        cout << ans << endl;
+        ll n; cin >> n;
+        ll ans = lcm(n+1, 4*n);
+        cout << (ans/(n+1))+1 << endl;
     }
 
     return 0;

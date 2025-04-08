@@ -1,2 +1,4 @@
 3
-4 8 100
+zig
+zag
+zague
