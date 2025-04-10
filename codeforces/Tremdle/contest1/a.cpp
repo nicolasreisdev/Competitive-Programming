@@ -18,12 +18,8 @@ const ll LMAX = 0x3f3f3f3f3f3f3f3f;
 int main(){
     fastio;
     int a, b, c; cin >> a >> b >> c;
-    ll ans = 0;
-    while(a > 1 && b > 2 && c > 4){
-        a-=1; b-=2; c-=4;
-        ans+=7;
-    }
-    cout << ans << endl;
+    ll ans = min({a, b/2, c/4});
+    cout << ans*7 << endl;
 
 
     return 0;
