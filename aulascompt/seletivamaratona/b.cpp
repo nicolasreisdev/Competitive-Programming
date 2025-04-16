@@ -24,7 +24,7 @@ int main(){
     int n, k; cin >> n >> k;
     ll ans = 0;
     for(int i = 1; i <= n; i++){
-        if( i < (k-i) && (k-i) <= n){
+        if( i < (k-i) && (k-i) <= n){ // i+k-i <= n
             ans++;
         }
     }
