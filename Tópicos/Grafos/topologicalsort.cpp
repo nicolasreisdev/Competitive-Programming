@@ -24,6 +24,59 @@ void topologicalSort(vector<int> g[], int n){
     cout << endl;
 }
 
+// ordenacao topologica com bfs
+
+vector<int> list_adj[1];
+long long grau[1] = {0};
+
+void solve()
+{
+
+    int n, m, a, b, x;
+    int count = 0;
+    vector<int> order;
+
+    cin >> n >> m;
+
+    for (int i = 0; i < m; i++)
+    {
+        cin >> a >> b;
+        list_adj[a].push_back(b);
+        grau[b]++;
+    }
+    priority_queue<int> pq;
+    for (int i = 1; i <= n; i++)
+    {
+        if (grau[i] == 0)
+            pq.push(-i);
+    }
+    while (!pq.empty())
+    {
+        // cout << x << endl;
+        x = -pq.top();
+        pq.pop();
+        count++;
+        order.push_back(x);
+
+        for (auto z : list_adj[x])
+        {
+            grau[z]--;
+            if (grau[z] == 0)
+            {
+                pq.push(-z);
+            }
+        }
+    }
+    if (count < n){
+        cout << -1;
+    }
+    else{
+        for (int v : order)
+            cout << v << " ";
+    }
+    cout << endl;
+}
+
 int main(){
 
 }

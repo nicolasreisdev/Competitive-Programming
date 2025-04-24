@@ -12,8 +12,9 @@ int main(){
 
     int a, b, c; cin >> a >> b >> c;
 
-    int x = a*b/c, y = a*c/b, z=b*c/a;
-    cout << 4*sqrt(x+y+z) << endl;
+    int x = a*b/c, y = a*c/b, z=b*c/a; // lados do paralelogramo
+    cout << 4*sqrt(x+y+z) << endl; // perimetro = 4*sqrt(a*b*c)
+    cout << 2*(x+y+z) << endl; // area = 2*(a*b + b*c + c*a)
 
 
     return 0;
