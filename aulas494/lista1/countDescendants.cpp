@@ -80,7 +80,6 @@ public:
         : n((int)_adj.size()), adj(_adj), tin(n), et(n), dep(n),
           rmq(vector<pair<int, int>>(1)), distDep(n), tout(n)
     {
-
         dfs(0, -1);
         vector<pair<int, int>> arr(n);
         for (int i = 0; i < n; i++)
@@ -145,6 +144,7 @@ public:
         }
     }
 };
+
 
 
 int main(){

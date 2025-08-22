@@ -80,7 +80,7 @@ int main(){
 
     dfs(g, 1, 0, start, end);
 
-    BIT<ll> bit(n+1);
+    BIT<ll> bit(n+1);   
     for(int i = 1; i <= n;i++){
         bit.add(start[i], value[i]);
     }
