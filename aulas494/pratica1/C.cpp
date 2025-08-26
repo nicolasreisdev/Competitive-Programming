@@ -10,7 +10,7 @@ using namespace std;
 #define rm pop_back
 #define f first
 #define s second
-// #define sz size
+#define sz size
 #define in insert
 
 typedef pair<int, int> p;
@@ -77,7 +77,7 @@ public:
             int tm = (tl + tr) / 2;
             update(v * 2, tl, tm, l, min(r, tm), addend);
             update(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r, addend);
-            t[v] = t[v * 2] + t[v * 2 + 1];
+            t[v] = max(t[v * 2], t[v * 2 + 1]);
         }
     }
 
@@ -94,8 +94,8 @@ public:
             return t[v];
         push(v, tl, tr);
         int tm = (tl + tr) / 2;
-        return query(v * 2, tl, tm, l, min(r, tm)) +
-               query(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r);
+        return max(query(v * 2, tl, tm, l, min(r, tm)),
+                   query(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
     }
 
     T query(int l, int r)
@@ -108,11 +108,13 @@ private:
     int mxPos;
 };
 
-class Hld{
+class Hld
+{
 public:
-    // lista de adjacencia (nao direcionada), valor em cada vertice, qual será a raiz da árvore
+    // lista de adjacencia (nao direcionada), valor em cada vertice, qual sera a raiz da arvore
     //
-    Hld(vector<vector<int>> &adj, vector<T> &value_, int root = 0) : st(adj.size()){
+    Hld(vector<vector<int>> &adj, vector<T> &value_, int root = 0) : st(adj.size())
+    {
 
         ct = 0; // marca os vertices com codigo 0,1,2 ... com base na posicao em que vao ficar na seg tree
         int n = adj.size();
@@ -123,15 +125,16 @@ public:
         head[root] = root;
         depth[root] = 0; // vamos considerar que a raiz esta na profundidade 0 (opcional)
         dfs(adj, root, -1);
-        build(adj, v, ct, root, -1); // segunda DFS, após colocar as arestas pesadas como (u, adj[u][0])
+        build(adj, v, ct, root, -1); // segunda DFS, apos colocar as arestas pesadas como (u, adj[u][0])
         st.build(v);                 // cria a Seg Tree
     }
     // as consultas nas chains sao sempre de cima para baixo
     // note que se o pai de head de v estiver no meio da chain de u --> nao gera problema
-    // pois o pos de u será menor que v e trocariamos os dois..
+    // pois o pos de u sera menor que v e trocariamos os dois..
     // ou seja, sempre teremos  pos[u] >= pos[v]
-    // assim, a consulta é sempre do pos maior para o menor...
-    T query(int u, int v){ // consulta nos nodos do caminho entre vertices u e v
+    // assim, a consulta e sempre do pos maior para o menor...
+    T query(int u, int v)
+    { // consulta nos nodos do caminho entre vertices u e v
         if (pos[u] < pos[v])
             swap(u, v); // posicoes sao de cima para baixo...
         if (head[u] == head[v])
@@ -139,31 +142,35 @@ public:
 
         // ATUALIZAR (exemplo: minimo de caminho, maximo de caminho, etc)
         // implementacao atual: soma
-        return st.query(pos[head[u]], pos[u]) + query(parent[head[u]], v);
+        return max(st.query(pos[head[u]], pos[u]), query(parent[head[u]], v));
     }
 
     // soma valor aos vertices ao longo do caminho..
-    void updatePath(int u, int v, T valor){
-        if (pos[u] < pos[v])
-            swap(u, v); // posicoes sao de cima para baixo...
-        if (head[u] == head[v])
-            st.update(pos[v], pos[u], valor); // estao na mesma chain
-        else{
-            st.update(pos[head[u]], pos[u], valor);
-            updatePath(parent[head[u]], v, valor);
-        }
-    }
+    // void updatePath(int u, int v, T valor){
+    //     if (pos[u] < pos[v])
+    //         swap(u, v); // posicoes sao de cima para baixo...
+    //     if (head[u] == head[v])
+    //         st.update(pos[v], pos[u], valor); // estao na mesma chain
+    //     else{
+    //         st.update(pos[head[u]], pos[u], valor);
+    //         updatePath(parent[head[u]], v, valor);
+    //     }
+    // }
     //! extra!
 
     // Na dfs, ao processar o nodo u os (sz[u]-1) proximos elementos todos de sua subarvore estarao logo apos ele no vetor v de valores da seg tree
-    T querySubtree(int u){ // consulta na subarvore inteira do nodo u
+    T querySubtree(int u)
+    { // consulta na subarvore inteira do nodo u
         return st.query(pos[u], pos[u] + sz[u] - 1);
     }
     // soma valor a subarvore.
-    void updateSubtree(int u, T valor){
+    void updateSubtree(int u, T valor)
+    {
         st.update(pos[u], pos[u] + sz[u] - 1, valor);
     }
-    int lca(int u, int v){
+
+    int lca(int u, int v)
+    {
         if (pos[u] < pos[v])
             swap(u, v);
 
@@ -174,16 +181,18 @@ public:
 
 private:
     // prev = nodo anterior na DFS (pai)
-    void dfs(vector<vector<int>> &adj, int root, int prev){
+    void dfs(vector<vector<int>> &adj, int root, int prev)
+    {
         sz[root] = 1;
         // w TEM que ser por referencia (por causa do swap!!!)
         for (int &w : adj[root])
-            if (w != prev){
+            if (w != prev)
+            {
                 depth[w] = depth[root] + 1; // opcional
                 dfs(adj, w, root);
                 sz[root] += sz[w];
-                // o primeiro filho de cada vértice será sempre o maior
-                //(ou seja, terá um heavy edge entre eles)
+                // o primeiro filho de cada vertice sera sempre o maior
+                //(ou seja, tera um heavy edge entre eles)
                 if (sz[w] > sz[adj[root][0]] || adj[root][0] == prev)
                     swap(adj[root][0], w);
             }
@@ -192,14 +201,16 @@ private:
     // ct = ordem de visitacao dos vertices (comeca de 0)
     // value = peso das arestas, que ficara na seg tree
     void build(vector<vector<int>> &adj, vector<T> &v,
-               int &ct, int root, int prev){
-        pos[root] = ct;      // onde cada vértice está na ordem da DFS?
-        v[ct] = value[root]; // valor de cada vértice (na ordem da dfs)
+               int &ct, int root, int prev)
+    {
+        pos[root] = ct;      // onde cada vertice esta na ordem da DFS?
+        v[ct] = value[root]; // valor de cada vertice (na ordem da dfs)
         ct++;
         for (int &w : adj[root])
-            if (w != prev){// vizinhos de root (cuidado para nao voltar)
-                parent[w] = root; // pai de cada vértice (para subir)
-                // cada vertice é cabeca da sua chain.
+            if (w != prev)
+            {                     // vizinhos de root (cuidado para nao voltar)
+                parent[w] = root; // pai de cada vertice (para subir)
+                // cada vertice e cabeca da sua chain.
                 // Depois arrumamos isso para os vertices que estiverem no heavy path
                 head[w] = (w == adj[root][0] ? head[root] : w);
                 build(adj, v, ct, w, root);
@@ -211,37 +222,48 @@ private:
     int ct;
 
     vector<int> pos;    // posicao do vertice na seg tree
-    vector<int> sz;     // sz[v] é o tamanho da subarvore com raiz em v
+    vector<int> sz;     // sz[v] e o tamanho da subarvore com raiz em v
     vector<int> parent; // pai de cada vertice
-    vector<int> head;   // head (começo) de cada chain
+    vector<int> head;   // head (comeco) de cada chain
     vector<int> depth;  // nivel de cada nodo (OPCIONAL, mas pode ser util...)
 
     SegTree st;
 };
 
-
-int main(){
+int main()
+{
     fastio;
-    int n, q; cin >> n >> q;
-    vector<vector<int>> g(n+1);
-    vector<int> value(n+1);
-    for(int i = 0; i < n-1;i++){
-        int u, v; cin >> u >> v;
-        g[u].push_back(v);
-        g[v].push_back(u);
+    int n;
+    cin >> n;
+    vector<vector<int>> g(n + 1);
+    vector<int> values(n + 1);
+    for (int i = 0; i < n - 1; i++)
+    {
+        int x, y;
+        cin >> x >> y;
+        g[x].push_back(y);
+        g[y].push_back(x);
     }
-
-    Hld hld(g,value, 1); 
-
-    while(q--){
-        int a, b, c, d; cin >> a >> b >> c >> d;
-        hld.updatePath(a, b, 1);
-        hld.updatePath(c, d, 1);
-        hld.updatePath(a, b, -1);
-        cout << hld.query(a, b) << endl;
-        hld.updatePath(c, d, -1);
+    Hld hld(g, values, 1);
+    int q;
+    cin >> q;
+    while (q--)
+    {
+        string query;
+        cin >> query;
+        if (query == "add")
+        {
+            int v, x;
+            cin >> v >> x;
+            hld.updateSubtree(v, x);
+        }
+        else
+        {
+            int u, v;
+            cin >> u >> v;
+            cout << hld.query(u, v) << endl;
+        }
     }
-
 
     return 0;
 }
