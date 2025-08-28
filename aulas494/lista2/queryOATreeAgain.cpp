@@ -19,109 +19,93 @@ const int MAX = 0x3f3f3f3f;
 const ll LMAX = 0x3f3f3f3f3f3f3f3f;
 
 typedef int T;
-class SegTree
-{
+class SegTree{
 public:
-    SegTree(int n)
-    {
+    SegTree(int n){
         mxPos = n - 1;
-        t.resize(4 * n);
+        t.resize(4 * n, 0);
+        lazy.resize(4 * n, 0);
     }
 
-    T combine(T a, T b)
-    {
-        if (a > b)
-            return a;
-        if (b > a)
-            return b;
-        return a;
-    }
-
-    // constroi a segTree com os elementos de a
-    // inicialmente, tl=0, tr=n-1
-    void build(vector<int> &a, int tl, int tr, int v)
-    {
-        if (tl == tr)
-        {                 // folha
-            t[v] = a[tl]; // adaptar
+    void build(vector<T> &a, int v, int tl, int tr){
+        if (tl == tr){
+            t[v] = a[tl];
         }
-        else
-        {
-            int tm = (tl + tr) / 2; // meio do segmento
-            // constroi nodos da esquerda ([tl,tm])
-            build(a, tl, tm, v * 2);
-            // constroi nodos da direita ([tm+1,tr])
-            build(a, tm + 1, tr, v * 2 + 1);
-            // junta o resultado dos segmentos da esquerda e direita
-            // em geral, aqui é lugar mais "adaptado"
-            t[v] = combine(t[v * 2], t[v * 2 + 1]);
+        else{
+            int tm = (tl + tr) / 2;
+            build(a, v * 2, tl, tm);
+            build(a, v * 2 + 1, tm + 1, tr);
+            t[v] = (t[v * 2] + t[v * 2 + 1]);
         }
     }
-    void build(vector<int> &a)
-    {
-        build(a, 0, mxPos, 1);
+
+    void build(vector<T> &a){
+        build(a, 1, 0, mxPos);
     }
 
-    // consulta para encontrar a soma do intervalo [l,r]
-    // procura no vértice v, representando os intervalos
-    //[tl,tr] (na árvore)
-    T query(int v, int tl, int tr, int l, int r)
-    {
-        if (l > r || t[v] == 0)
-            return -1; // adaptar, caso outro tipo de consulta
-        if (l == tl && r == tr){
+    void push(int v, int tl, int tr){
+        if (lazy[v] != 0){
+            int tm = (tl + tr) / 2;
+            t[v * 2] += lazy[v] * (tm - tl + 1);
+            lazy[v * 2] += lazy[v];
+            t[v * 2 + 1] += lazy[v] * (tr - tm);
+            lazy[v * 2 + 1] += lazy[v];
+            lazy[v] = 0;
+        }
+    }
+
+    void update(int v, int tl, int tr, int l, int r, T addend){
+        if (l > r)
+            return;
+        if (l == tl && tr == r){
+            t[v] = abs(t[v] - 1);
+            lazy[v] += addend;
+        }
+        else{
+            push(v, tl, tr);
+            int tm = (tl + tr) / 2;
+            update(v * 2, tl, tm, l, min(r, tm), addend);
+            update(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r, addend);
+            //t[v] = t[v * 2] + t[v * 2 + 1];
+        }
+    }
+
+    void update(int l, int r, T add){
+        update(1, 0, mxPos, l, r, add);
+    }
+
+    T query(int v, int tl, int tr, int l, int r){
+        if (l > r)
+            return 0;
+        if (l == tl && r == tr)
             return t[v];
-        }
+        push(v, tl, tr);
         int tm = (tl + tr) / 2;
-
-        // chama SEMPRE para os dois lados
-        // mesmo se desnecessário --> ok (primeiro if)
-        // adaptar, caso outro tipo de consulta
-        return combine(query(v * 2, tl, tm, l, min(r, tm)),
-                       query(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
+        return query(v * 2, tl, tm, l, min(r, tm)) +
+               query(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r);
     }
+
     T query(int l, int r){
         return query(1, 0, mxPos, l, r);
     }
 
-    // nesse caso, new_val é inteiro
-    void update(int v, int tl, int tr, int pos){
-        if (tl == tr){
-            t[v] = !t[v];
-        }
-        else{
-            int tm = (tl + tr) / 2;
-            if (pos <= tm) // nodo está na esquerda?
-                update(v * 2, tl, tm, pos);
-            else // nodo está na direita?
-                update(v * 2 + 1, tm + 1, tr, pos);
-
-            // atualiza raiz atual
-            // adaptar, caso outro tipo de consulta
-            t[v] = combine(t[v * 2], t[v * 2 + 1]);
-        }
-    }
-    void update(int pos){
-        update(1, 0, mxPos, pos);
-    }
-
 private:
-    vector<T> t;
+    vector<T> t, lazy;
     int mxPos;
 };
 
-class Hld
-{
+class Hld{
 public:
     // lista de adjacencia (nao direcionada), valor em cada vertice, qual será a raiz da árvore
     //
-    Hld(vector<vector<int>> &adj, vector<int> &value_, int root = 0) : st(adj.size()){
+    Hld(vector<vector<int>> &adj, vector<T> &value_, int root = 0) : st(adj.size()){
+
         ct = 0; // marca os vertices com codigo 0,1,2 ... com base na posicao em que vao ficar na seg tree
         int n = adj.size();
         pos = sz = parent = head = depth = vector<int>(n);
         value = value_;
 
-        vector<int> v(n); // vetor com pesos dos vertices na seg tree..
+        vector<T> v(n); // vetor com pesos dos vertices na seg tree..
         head[root] = root;
         depth[root] = 0; // vamos considerar que a raiz esta na profundidade 0 (opcional)
         dfs(adj, root, -1);
@@ -133,17 +117,51 @@ public:
     // pois o pos de u será menor que v e trocariamos os dois..
     // ou seja, sempre teremos  pos[u] >= pos[v]
     // assim, a consulta é sempre do pos maior para o menor...
-    int query(int u, int v){ // consulta nos nodos do caminho entre vertices u e v
+    T query(int u, int v){ // consulta nos nodos do caminho entre vertices u e v
         if (pos[u] < pos[v])
             swap(u, v); // posicoes sao de cima para baixo...
         if (head[u] == head[v])
             return st.query(pos[v], pos[u]); // estao na mesma chain
 
-        return max(st.query(pos[head[u]], pos[u]), query(parent[head[u]], v)); // retorna o maior valor
+        // ATUALIZAR (exemplo: minimo de caminho, maximo de caminho, etc)
+        // implementacao atual: soma
+        int ans = max(st.query(pos[head[u]], pos[u]), query(parent[head[u]], v));   
+        if(ans <= -1) return -1;
+        return pos[ans];
     }
 
-    void updateVertice(int v){
-        st.update(pos[v]);
+    // soma valor aos vertices ao longo do caminho..
+    void updatePath(int u, int v, T valor){
+        if (pos[u] < pos[v])
+            swap(u, v); // posicoes sao de cima para baixo...
+        if (head[u] == head[v])
+            st.update(pos[v], pos[u], valor); // estao na mesma chain
+        else{
+            st.update(pos[head[u]], pos[u], valor);
+            updatePath(parent[head[u]], v, valor);
+        }
+    }
+    //! extra!
+
+    void updateVertice(int u){
+        st.update(pos[u], pos[u], 1);
+    }
+
+    // Na dfs, ao processar o nodo u os (sz[u]-1) proximos elementos todos de sua subarvore estarao logo apos ele no vetor v de valores da seg tree
+    T querySubtree(int u){ // consulta na subarvore inteira do nodo u
+        return st.query(pos[u], pos[u] + sz[u] - 1);
+    }
+    // soma valor a subarvore.
+    void updateSubtree(int u, T valor){
+        st.update(pos[u], pos[u] + sz[u] - 1, valor);
+    }
+    int lca(int u, int v){
+        if (pos[u] < pos[v])
+            swap(u, v);
+
+        if (head[u] == head[v]) // estao na mesma chain...
+            return v;
+        return lca(parent[head[u]], v);
     }
 
 private:
@@ -165,13 +183,13 @@ private:
 
     // ct = ordem de visitacao dos vertices (comeca de 0)
     // value = peso das arestas, que ficara na seg tree
-    void build(vector<vector<int>> &adj, vector<int> &v,
+    void build(vector<vector<int>> &adj, vector<T> &v,
                int &ct, int root, int prev){
         pos[root] = ct;      // onde cada vértice está na ordem da DFS?
         v[ct] = value[root]; // valor de cada vértice (na ordem da dfs)
         ct++;
         for (int &w : adj[root])
-            if (w != prev){// vizinhos de root (cuidado para nao voltar)
+            if (w != prev){                     // vizinhos de root (cuidado para nao voltar)
                 parent[w] = root; // pai de cada vértice (para subir)
                 // cada vertice é cabeca da sua chain.
                 // Depois arrumamos isso para os vertices que estiverem no heavy path
@@ -180,7 +198,7 @@ private:
             }
     }
 
-    vector<int> value; // valor armazenado em cada vertice
+    vector<T> value; // valor armazenado em cada vertice
 
     int ct;
 
@@ -215,7 +233,7 @@ int main(){
         else{
             // primeiro black node do node 1 até o nodo v
             int v; cin >> v;
-
+            cout << hld.query(1, v) << endl;
         }
     }
 
