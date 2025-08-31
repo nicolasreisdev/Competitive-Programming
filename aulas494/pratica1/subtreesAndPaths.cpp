@@ -10,7 +10,7 @@ using namespace std;
 #define rm pop_back
 #define f first
 #define s second
-#define sz size
+// #define sz size
 #define in insert
 
 typedef pair<int, int> p;
@@ -18,61 +18,50 @@ typedef long long ll;
 const int MAX = 0x3f3f3f3f;
 const ll LMAX = 0x3f3f3f3f3f3f3f3f;
 
-typedef int T;
-class SegTree
-{
+typedef ll T;
+class SegTree{
 public:
-    SegTree(int n)
-    {
+    SegTree(int n){
         mxPos = n - 1;
         t.resize(4 * n, 0);
         lazy.resize(4 * n, 0);
     }
 
-    void build(vector<T> &a, int v, int tl, int tr)
-    {
-        if (tl == tr)
-        {
+    void build(vector<T> &a, int v, int tl, int tr){
+        if (tl == tr){
             t[v] = a[tl];
         }
-        else
-        {
+        else{
             int tm = (tl + tr) / 2;
             build(a, v * 2, tl, tm);
             build(a, v * 2 + 1, tm + 1, tr);
-            t[v] = (t[v * 2] + t[v * 2 + 1]);
+            t[v] = max(t[v * 2],t[v * 2 + 1]);
         }
     }
 
-    void build(vector<T> &a)
-    {
+    void build(vector<T> &a){
         build(a, 1, 0, mxPos);
     }
 
-    void push(int v, int tl, int tr)
-    {
-        if (lazy[v] != 0)
-        {
-            int tm = (tl + tr) / 2;
-            t[v * 2] += lazy[v] * (tm - tl + 1);
+    void push(int v, int tl, int tr){
+        if (lazy[v] != 0){
+            // int tm = (tl + tr) / 2;
+            t[v * 2] += lazy[v] ;
             lazy[v * 2] += lazy[v];
-            t[v * 2 + 1] += lazy[v] * (tr - tm);
+            t[v * 2 + 1] += lazy[v];
             lazy[v * 2 + 1] += lazy[v];
             lazy[v] = 0;
         }
     }
 
-    void update(int v, int tl, int tr, int l, int r, T addend)
-    {
+    void update(int v, int tl, int tr, int l, int r, T addend){
         if (l > r)
             return;
-        if (l == tl && tr == r)
-        {
-            t[v] += addend * (tr - tl + 1);
+        if (l == tl && tr == r){
+            t[v] += addend;
             lazy[v] += addend;
         }
-        else
-        {
+        else{
             push(v, tl, tr);
             int tm = (tl + tr) / 2;
             update(v * 2, tl, tm, l, min(r, tm), addend);
@@ -81,15 +70,13 @@ public:
         }
     }
 
-    void update(int l, int r, T add)
-    {
+    void update(int l, int r, T add){
         update(1, 0, mxPos, l, r, add);
     }
 
-    T query(int v, int tl, int tr, int l, int r)
-    {
+    T query(int v, int tl, int tr, int l, int r){
         if (l > r)
-            return 0;
+            return -LMAX;
         if (l == tl && r == tr)
             return t[v];
         push(v, tl, tr);
@@ -98,8 +85,7 @@ public:
                    query(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r));
     }
 
-    T query(int l, int r)
-    {
+    T query(int l, int r){
         return query(1, 0, mxPos, l, r);
     }
 
@@ -108,14 +94,11 @@ private:
     int mxPos;
 };
 
-class Hld
-{
+class Hld{
 public:
     // lista de adjacencia (nao direcionada), valor em cada vertice, qual sera a raiz da arvore
     //
-    Hld(vector<vector<int>> &adj, vector<T> &value_, int root = 0) : st(adj.size())
-    {
-
+    Hld(vector<vector<int>> &adj, vector<T> &value_, int root = 0) : st(adj.size()){
         ct = 0; // marca os vertices com codigo 0,1,2 ... com base na posicao em que vao ficar na seg tree
         int n = adj.size();
         pos = sz = parent = head = depth = vector<int>(n);
@@ -133,8 +116,7 @@ public:
     // pois o pos de u sera menor que v e trocariamos os dois..
     // ou seja, sempre teremos  pos[u] >= pos[v]
     // assim, a consulta e sempre do pos maior para o menor...
-    T query(int u, int v)
-    { // consulta nos nodos do caminho entre vertices u e v
+    T query(int u, int v){ // consulta nos nodos do caminho entre vertices u e v
         if (pos[u] < pos[v])
             swap(u, v); // posicoes sao de cima para baixo...
         if (head[u] == head[v])
@@ -145,32 +127,16 @@ public:
         return max(st.query(pos[head[u]], pos[u]), query(parent[head[u]], v));
     }
 
-    // soma valor aos vertices ao longo do caminho..
-    // void updatePath(int u, int v, T valor){
-    //     if (pos[u] < pos[v])
-    //         swap(u, v); // posicoes sao de cima para baixo...
-    //     if (head[u] == head[v])
-    //         st.update(pos[v], pos[u], valor); // estao na mesma chain
-    //     else{
-    //         st.update(pos[head[u]], pos[u], valor);
-    //         updatePath(parent[head[u]], v, valor);
-    //     }
-    // }
-    //! extra!
-
     // Na dfs, ao processar o nodo u os (sz[u]-1) proximos elementos todos de sua subarvore estarao logo apos ele no vetor v de valores da seg tree
-    T querySubtree(int u)
-    { // consulta na subarvore inteira do nodo u
+    T querySubtree(int u){ // consulta na subarvore inteira do nodo u
         return st.query(pos[u], pos[u] + sz[u] - 1);
     }
     // soma valor a subarvore.
-    void updateSubtree(int u, T valor)
-    {
-        st.update(pos[u], pos[u] + sz[u] - 1, valor);
+    void updateSubtree(int u, T valor){
+        st.update(pos[u],pos[u] + sz[u] - 1, valor);
     }
 
-    int lca(int u, int v)
-    {
+    int lca(int u, int v){
         if (pos[u] < pos[v])
             swap(u, v);
 
@@ -181,13 +147,11 @@ public:
 
 private:
     // prev = nodo anterior na DFS (pai)
-    void dfs(vector<vector<int>> &adj, int root, int prev)
-    {
+    void dfs(vector<vector<int>> &adj, int root, int prev){
         sz[root] = 1;
         // w TEM que ser por referencia (por causa do swap!!!)
         for (int &w : adj[root])
-            if (w != prev)
-            {
+            if (w != prev){
                 depth[w] = depth[root] + 1; // opcional
                 dfs(adj, w, root);
                 sz[root] += sz[w];
@@ -201,14 +165,12 @@ private:
     // ct = ordem de visitacao dos vertices (comeca de 0)
     // value = peso das arestas, que ficara na seg tree
     void build(vector<vector<int>> &adj, vector<T> &v,
-               int &ct, int root, int prev)
-    {
+               int &ct, int root, int prev){
         pos[root] = ct;      // onde cada vertice esta na ordem da DFS?
         v[ct] = value[root]; // valor de cada vertice (na ordem da dfs)
         ct++;
         for (int &w : adj[root])
-            if (w != prev)
-            {                     // vizinhos de root (cuidado para nao voltar)
+            if (w != prev){// vizinhos de root (cuidado para nao voltar)
                 parent[w] = root; // pai de cada vertice (para subir)
                 // cada vertice e cabeca da sua chain.
                 // Depois arrumamos isso para os vertices que estiverem no heavy path
@@ -230,15 +192,13 @@ private:
     SegTree st;
 };
 
-int main()
-{
+int main(){
     fastio;
     int n;
     cin >> n;
     vector<vector<int>> g(n + 1);
-    vector<int> values(n + 1);
-    for (int i = 0; i < n - 1; i++)
-    {
+    vector<T> values(n + 1, 0);
+    for (int i = 0; i < n - 1; i++){
         int x, y;
         cin >> x >> y;
         g[x].push_back(y);
@@ -247,18 +207,15 @@ int main()
     Hld hld(g, values, 1);
     int q;
     cin >> q;
-    while (q--)
-    {
+    while (q--){
         string query;
         cin >> query;
-        if (query == "add")
-        {
+        if (query == "add"){
             int v, x;
             cin >> v >> x;
             hld.updateSubtree(v, x);
         }
-        else
-        {
+        else{
             int u, v;
             cin >> u >> v;
             cout << hld.query(u, v) << endl;
