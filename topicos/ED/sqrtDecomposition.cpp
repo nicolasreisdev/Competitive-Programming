@@ -42,6 +42,7 @@ ll query(int l, int r, vector<int> &v, vector<int> &bucket, int bucketsize){
             acc += v[i]; // somar o valor do vetor
         }
     }
+    
     return acc;
 }
 

@@ -16,22 +16,25 @@ int main(){
     }
 
     vector<pair<int, long long>> atualizacoes;
-    for (int i = 0; i < q; i++)
-    {
+    for (int i = 0; i < q; i++){
         int t, l, r;
         cin >> t >> l >> r;
-        if (t == 1)
-        {
+        if (t == 1){
             // sq.update(l - 1, r);
+            if(atualizacoes.size() >= sqrt(n)){
+                for (int i = 1; i <= n; i++){ // prefixo(a) = soma(0...a-1)
+                    prefix[i] = prefix[i - 1] + v[i - 1];
+                }
+
+                atualizacoes.clear(); 
+            }
             atualizacoes.push_back(make_pair(l - 1, r - v[l - 1])); // tenho que somar r-v[i] para compensar a mudanca...
             v[l - 1] = r;
         }
-        else
-        { // calcular soma de l-1 até r-1
+        else{ // calcular soma de l-1 até r-1
             long long soma = prefix[r] - prefix[l - 1];
             // varre as atualizacoes corrigindo soma...
-            for (auto &[pos, valor] : atualizacoes)
-            {
+            for (auto &[pos, valor] : atualizacoes){
                 if (l - 1 <= pos && pos <= r - 1)
                     soma += valor;
             }
