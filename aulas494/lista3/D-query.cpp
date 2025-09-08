@@ -24,26 +24,30 @@ const ll LMAX = 0x3f3f3f3f3f3f3f3f;
     // adapte essa classe!
 class JanelaMo{
 public:
-    JanelaMo(vector<int> &v_) : v(v_){ // tamanho do array
-        elems = 0;
+    JanelaMo(vector<int> &v_, int num ) : v(v_){ // tamanho do array
+        freq.resize(num, 0);
         n = 0;
     }
-    double valorConsulta(){ // adaptar: retorna o valor da consulta da janela atual
-        return ((double)elems) / n;
+    int valorConsulta(){ // adaptar: retorna o valor da consulta da janela atual
+        return n; // retorna a quantidade de cores no intervalo
     }
     void add(int idx){ // adaptar:adiciona o elemento da posicao idx a janela
-        elems += v[idx];
-        n++;
+        if (freq[v[idx]] == 0){ // nova cor - O(1) para consulta
+            n++;
+        }
+        freq[v[idx]]++;
     }
     void remove(int idx){ // adaptar:remove o elemento da posicao idx da janela
-        elems -= v[idx];
-        n--;
+        freq[v[idx]]--;
+        if (freq[v[idx]] == 0){ // não possui mais essa cor - O(1) para consulta
+            n--;
+        }
     }
 
 private:
     vector<int> &v; // array de entrada (estático!) . Adaptar para outros tipos...
-    int elems;
-    int n;
+    vector<int> freq;
+    int n; // quantidade de cores no intervalo
 };
 
 struct Query{
@@ -57,7 +61,16 @@ int main(){
     for (int i = 0; i < n; i++){
         cin >> v[i];
     }
-
+    map<int, int> comp;
+    int next = 0; // quantidade de cores
+    for (int i = 0; i < n; i++){
+        if (comp.find(v[i]) == comp.end()){
+            comp[v[i]] = next++;
+        }
+    }
+    for (int i = 0; i < n; i++){
+        v[i] = comp[v[i]]; // id de cada cor
+    }
     int q;
     cin >> q;
     vector<Query> queries;
@@ -78,11 +91,11 @@ int main(){
     };
     sort(queries.begin(), queries.end(), mo_cmp);
 
-    JanelaMo janela(v);
+    JanelaMo janela(v, next);
 
     int mo_left = -1;
     int mo_right = -1;
-    vector<double> ans(q); // respostas das consultas (adaptar)
+    vector<int> ans(q); // respostas das consultas (adaptar)
     for (int i = 0; i < q; i++){
         int left = queries[i].l;
         int right = queries[i].r;
@@ -107,7 +120,7 @@ int main(){
                 janela.remove(mo_right--);
             }
         }
-
+        // cout << "consulta " << queries[i].idx  << endl;
         ans[queries[i].idx] = janela.valorConsulta();
     }
 
