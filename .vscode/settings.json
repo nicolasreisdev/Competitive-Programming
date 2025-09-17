@@ -20,6 +20,7 @@
         "span": "cpp",
         "regex": "cpp",
         "valarray": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "type_traits": "cpp"
     }
 }

@@ -26,6 +26,7 @@ using namespace std;
 using namespace std;
 
 #define INF 2000000000
+
 typedef pair<int, int> T;
 class SegTree{
 public:
