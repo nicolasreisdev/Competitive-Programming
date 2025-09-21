@@ -18,76 +18,56 @@ typedef long long ll;
 const int MAX = 0x3f3f3f3f;
 const ll LMAX = 0x3f3f3f3f3f3f3f3f;
 
-template <class T>
-class BIT
-{
-private:
-    int size;
-    vector<T> bit;
-    vector<T> arr;
+long long int _tam_crivo;
+vector<int> primos;
 
-public:
-    BIT(int size) : size(size), bit(size + 1), arr(size) {}
-
-    /** Sets the value at index ind to val. */
-    void set(int ind, T val) { add(ind, val - arr[ind]); }
-
-    /** Adds val to the element at index ind. */
-    void add(int ind, T val)
-    {
-        arr[ind] += val;
-        ind++;
-        for (; ind <= size; ind += ind & -ind)
-        {
-            bit[ind] += val;
-        }
-    }
-
-    /** @return The sum of all values in [0, ind]. */
-    T pref_sum(int ind)
-    {
-        ind++;
-        T total = 0;
-        for (; ind > 0; ind -= ind & -ind)
-        {
-            total += bit[ind];
-        }
-        return total;
-    }
-};
-
-int n, k1, k2;
-ll ans = 0;
-vector<int> sub;
-vector<vector<int>> g;
-vector<bool> roots;
-
-void dfsAns(int u, int parent, int edges, BIT<ll> &bit){
-
-    int l = k1 - edges;
-    int r = k2 - edges;
-    if (r >= 0){
-        // cout << "entrei1: u -> " << u << " l -> " << l << " r -> " << r << " soma: " <<  bit.pref_sum(r) - bit.pref_sum(l - 1) << endl;
-        ans += bit.pref_sum(r) - bit.pref_sum(l - 1);
-    }
-
-    for (auto &v : g[u]){
-        if (v != parent && !roots[v])
-        {
-            dfsAns(v, u, edges + 1, bit);
+void crivo(int n){             
+    vector<bool> primes(n+1, true);
+    primes[0] = primes[1] = 0; // 0 não é primo
+    for (long long int i = 2; i <= n; i++){ 
+        if (primes[i])
+        { // se i é primo
+            for (long long int j = i * i; j <= n; j += i)
+            { // marcar todos os múltiplos de i como compostos
+                primes[j] = 0;
+            }
+            primos.push_back(i);
         }
     }
 }
 
-void dfsMelhor(int u, int parent, int edges, BIT<ll> &bit){
-    if (edges > k2)
-        return;
+ll n;
+ll ans = 0;
+vector<int> sub;
+vector<vector<int>> g;
+vector<vector<int>> dist;
+vector<bool> roots;
 
-    bit.add(edges, 1);
+ll dfsAns(int u, int parent, int depth, int edges){
+    ll localAns = 0;
+    for(auto &prime: primos){
+        int rest = prime - edges;
+        if(rest < 0) continue; 
+        if(!dist[depth][rest]) break; // primos em ordem crescente
+        if(prime != edges) localAns += dist[depth][rest]; // caminho em subárvores diferentes (soma se houver caminho edges+rest == prime)
+        else localAns += 2*dist[depth][rest]; // caminho na própria subárvore, prime == edges (contagem de 2*dist para não quebrar o algoritmo)
+    }
 
     for (auto &v : g[u]){
         if (v != parent && !roots[v]){
-            dfsMelhor(v, u, edges + 1, bit);
+            localAns += dfsAns(v, u, depth, edges + 1);
+        }
+    }
+    return localAns;
+}
+
+void dfsMelhor(int u, int parent, int depth, int edges, int add){
+
+    dist[depth][edges] += add; // +1 adiciona caminho -1 remove o caminho 
+
+    for (auto &v : g[u]){
+        if (v != parent && !roots[v]){
+            dfsMelhor(v, u, depth,  edges + 1, add);
         }
     }
 }
@@ -111,59 +91,49 @@ int centroid(int u, int parent, int size){
     return u;
 }
 
-long long int _tam_crivo;
-long long int primes[10000010];
-
-void crivo(){
-    _tam_crivo = 1000000 + 10; // tamanho do crivo 1e6 + 10
-    memset(primes, 1, sizeof(primes)); // 1 = primo, 0 = composto
-    vector<int> primos;
-    primes[0] = 0; // 0 não é primo
-    for (long long int i = 2; i <= sqrt(_tam_crivo); i++){ // para i de 2 até a raiz de _tam_crivo
-        if (primes[i]){ // se i é primo
-            for (long long int j = i * i; j <= _tam_crivo; j += i){ // marcar todos os múltiplos de i como compostos
-                primes[j] = 0;
-            }
-            primos.push_back(i);
-        }
-    }
-}
 
 
-void algorithm(int root, BIT<ll> &bit){
+void algorithm(int root, int depth){
     int n = subTree(root, -1);
     int newRoot = centroid(root, -1, n);
     // cout << "centroid: " << newRoot << endl;
+    
+    if(dist[depth].size() < n) dist[depth].resize(n, 0);
 
-    bit.add(0, 1);
+    dfsMelhor(newRoot, newRoot, depth, 0, 1);
 
+    ll aux = 0;
     for (auto &v : g[newRoot]){
         if (!roots[v]){
-            dfsAns(v, newRoot, 1, bit);
-            dfsMelhor(v, newRoot, 1, bit);
+            dfsMelhor(v, newRoot, depth, 1, -1); // exclusão
+            aux += dfsAns(v, newRoot, depth, 1); // consulta
+            dfsMelhor(v, newRoot, depth, 1, 1); // inclusão para as próximas subárvores
         }
     }
 
+    ans += aux/2; // correção
 
+    
     roots[newRoot] = true;
 
+    fill(dist[depth].begin(), dist[depth].begin() + n, 0); // limpa
+    
     for (auto &v : g[newRoot]){
-        if (!roots[v])
-        {
-            algorithm(v, bit);
+        if (!roots[v]){
+            algorithm(v, depth+1);
         }
     }
 }
 
 int main(){
     fastio;
-    crivo();
     cin >> n;
+    crivo(n);
 
     g.assign(n + 1, vector<int>());
     sub.resize(n + 1);
     roots.assign(n + 1, false);
-    BIT<ll> bit(n + 1);
+    dist.assign(n+1, vector<int>());
 
     for (int i = 0; i < n - 1; i++){
         int u, v;
@@ -172,9 +142,10 @@ int main(){
         g[v-1].pb(u-1);
     }
 
-    algorithm(0, bit);
+    algorithm(0, 0);
+    double combinacao = (n*(n-1))/2;
 
-    cout << ans << endl;
+    cout << (ans/combinacao) << endl;
 
     return 0;
 }
