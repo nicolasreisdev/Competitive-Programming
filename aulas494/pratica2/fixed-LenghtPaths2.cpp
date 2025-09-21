@@ -27,24 +27,19 @@ vector<ll> flag;
 int flagAtual = 0;
 
 typedef int T;
-class SegTree
-{
+class SegTree{
 public:
-    SegTree(int n)
-    {
+    SegTree(int n){
         mxPos = n - 1;
         t.resize(4 * n, 0);
         lazy.resize(4 * n, 0);
     }
 
-    void build(vector<T> &a, int v, int tl, int tr)
-    {
-        if (tl == tr)
-        {
+    void build(vector<T> &a, int v, int tl, int tr){
+        if (tl == tr){
             t[v] = a[tl];
         }
-        else
-        {
+        else{
             int tm = (tl + tr) / 2;
             build(a, v * 2, tl, tm);
             build(a, v * 2 + 1, tm + 1, tr);
@@ -52,15 +47,12 @@ public:
         }
     }
 
-    void build(vector<T> &a)
-    {
+    void build(vector<T> &a){
         build(a, 1, 0, mxPos);
     }
 
-    void push(int v, int tl, int tr)
-    {
-        if (lazy[v] != 0)
-        {
+    void push(int v, int tl, int tr){
+        if (lazy[v] != 0){
             int tm = (tl + tr) / 2;
             t[v * 2] += lazy[v] * (tm - tl + 1);
             lazy[v * 2] += lazy[v];
@@ -70,17 +62,14 @@ public:
         }
     }
 
-    void update(int v, int tl, int tr, int l, int r, T addend)
-    {
+    void update(int v, int tl, int tr, int l, int r, T addend){
         if (l > r)
             return;
-        if (l == tl && tr == r)
-        {
+        if (l == tl && tr == r){
             t[v] += addend * (tr - tl + 1);
             lazy[v] += addend;
         }
-        else
-        {
+        else{
             push(v, tl, tr);
             int tm = (tl + tr) / 2;
             update(v * 2, tl, tm, l, min(r, tm), addend);
@@ -89,13 +78,11 @@ public:
         }
     }
 
-    void update(int l, int r, T add)
-    {
+    void update(int l, int r, T add){
         update(1, 0, mxPos, l, r, add);
     }
 
-    T query(int v, int tl, int tr, int l, int r)
-    {
+    T query(int v, int tl, int tr, int l, int r){
         if (l > r)
             return 0;
         if (l == tl && r == tr)
@@ -106,8 +93,7 @@ public:
                query(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r);
     }
 
-    T query(int l, int r)
-    {
+    T query(int l, int r){
         return query(1, 0, mxPos, l, r);
     }
 
@@ -116,33 +102,34 @@ private:
     int mxPos;
 };
 
-void dfsAns(int u, int parent, int sum, int edges){
+vector<bool> roots;
+vector<vector<p>> g;
+ll ans;
+int n, k1, k2;
+
+void dfsAns(int u, int parent, int edges){
 
     // if (flag[rest] == flagAtual){
     //     ans = min(ans, (ll)edges + melhor[rest]);
     // }
 
-    for (auto &v: g[u])
-    {
-        if (v != parent)
-        {
-            dfsAns(v, u, sum, edges + 1);
+    for (auto &v: g[u]){
+        if (v != parent){
+            dfsAns(v, u, edges + 1);
         }
     }
 }
 
-void dfsMelhor(int u, int parent, int sum, int edges){
+void dfsMelhor(int u, int parent, int edges){
 
-    if (flag[sum] != flagAtual || edges < melhor[sum]){
-        melhor[sum] = edges;
-        flag[sum] = flagAtual;
+    if (edges >= k1 && edges <= k2){
+        ans++;
+        // sumEdges.update(edges, edges, 1); // soma na 
     }
 
-    for (auto &v: g[u])
-    {
-        if (v != parent)
-        {
-            dfsMelhor(v, u, sum, edges + 1);
+    for (auto &v: g[u]){
+        if (v != parent){
+            dfsMelhor(v, u, edges + 1);
         }
     }
 }
@@ -166,15 +153,47 @@ int centroid(int u, int parent, int size){
     return u;
 }
 
+void algorithm(int root){
+
+    int n = subTree(root, -1);
+    int newRoot = centroid(root, -1, n); // pega o centroid
+
+    flagAtual++;
+
+    melhor[0] = 0;
+    flag[0] = flagAtual;
+
+    for (auto v: g[newRoot]){ // para a subárvore do centroid
+        if (!roots[v]){
+            dfsAns(v, newRoot,  1);
+            dfsMelhor(v, newRoot, 1);
+        }
+    }
+
+    roots[newRoot] = true;
+
+    for (auto &v : g[newRoot]){
+        if (!roots[v]){
+            algorithm(v);
+        }
+    }
+}
+
 int main(){
     fastio;
-    int n, k1, k2; cin >> n >> k1 >> k2;
+    cin >> n >> k1 >> k2;
     g.assign(n, vector<int>());
     for(int i = 0; i < n-1;i++){
         int u,v; cin >> u >> v;
         g[u].pb(v);
         g[v].pb(u);
     }
+
+    // SegTree sumEdges(k2-k1); // intervalo possível de arestas
+
+    algorithm(1);
+
+
 
     return 0;
 }
