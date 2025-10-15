@@ -33,7 +33,7 @@ vector<int> suffix_array(string s){
         ra[i] = s[i]; // o rank é igual ao caractere da string
     }
 
-    for(int k = 0; k < n; k ? k *= 2 : k++){ // enquanto k for diferente de 0, k é igual a k * 2, senão k é igual a 0
+    for(int k = 1; k < n; k ? k *= 2 : k++){ // enquanto k for diferente de 0, k é igual a k * 2, senão k é igual a 0
         vector<int> nsa(sa), nra(n), cnt(N); // nsa é o novo suffix array, nra é o novo rank, cnt é o vetor que armazenará a quantidade de caracteres
         for(int i = 0; i < n; i++){ // inicializa o vetor cnt
             nsa[i] = (nsa[i] - k + n) % n; // atualiza o suffix array
