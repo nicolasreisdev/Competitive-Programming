@@ -18,8 +18,13 @@ typedef long long ll;
 const int MAX = 0x3f3f3f3f;
 const ll LMAX = 0x3f3f3f3f3f3f3f3f;
 
-int main()
-{
+int main(){
     fastio;
+
+    int n, m; cin >> n >> m;
+    vector<int> v(n);
+    for(int i = 0; i < n;i++) cin >> v[i];
+
+    
     return 0;
 }
