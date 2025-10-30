@@ -1,0 +1,2 @@
+Best cost: 8098.4964
+Signature: 2.3000e+06
